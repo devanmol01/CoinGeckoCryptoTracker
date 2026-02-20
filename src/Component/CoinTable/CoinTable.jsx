@@ -2,11 +2,14 @@ import {useContext, useState } from "react";
 import { fetchCoinData } from "../../service/CoinData";
 import { useQuery } from "@tanstack/react-query";
 import { currencyContext } from "../../context/CurrencyContext";
+import { useNavigate } from "react-router-dom";
+import { Instagram } from 'react-content-loader'
 
 
 
 function CoinTable( ){
     const{currency}=useContext(currencyContext)
+    const navigate=useNavigate()
    
     const[page,setPage ]=useState(1);
     const { data, isLoading, isError, error } = useQuery({
@@ -17,9 +20,16 @@ function CoinTable( ){
     gcTime: 1000 * 60 * 2,
     staleTime: 1000 * 60 * 2,
 })
+    function handleClickRedirect(id){
+        navigate(`/details/${id}`)
+
+    }
     
     if(isError){
         return <div>Error:{error.message}</div>
+    }
+    if(isLoading){
+        return <Instagram/>
     }
     
     return(
@@ -45,10 +55,10 @@ function CoinTable( ){
                     {data && data.map((coin)=>{
                            
                         return(
-                            <div key={coin.id} className="w-full bg-transparent  flex py-4 px-2            font-semibold items-center justify-between">
+                            <div onClick={()=>handleClickRedirect(coin.id)} key={coin.id} className="w-full bg-transparent  flex py-4 px-2            font-semibold items-center justify-between">
                                 <div className="flex items-center justify-start gap-3 basis-[35%]">
                                     <div className="w-[5rem] h-[5rem] ">
-                                        <img src={coin.image} className="w-full h-full"/>
+                                        <img src={coin.image} className="w-full h-full" loading="lazy"/>
                                     </div>
                                     <div className="flex flex-col">
                                         <div className="text-black text-3xl">
